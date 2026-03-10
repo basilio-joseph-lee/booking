@@ -1,7 +1,7 @@
 
 import { getUsers } from "@/services/userService"
 import { User } from "@/types/user"
-import CreateUserModal from "@/components/CreateUserModal"
+// import CreateUserModal from "@/components/CreateUserModal"
 
 export default async function UsersPage() {
 
@@ -23,7 +23,7 @@ const formatDate = (dateStr: string) => {
       <h1 className="text-center text-2xl font-bold mb-4">User List</h1>
       <div className="border border-gray-300 my-2"></div>
 
-      <CreateUserModal />
+      {/* <CreateUserModal /> */}
 
       <table className="table table-zebra w-[90vw] border border-gray-300 my-5">
         <thead>

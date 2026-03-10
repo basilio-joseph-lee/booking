@@ -2,7 +2,9 @@ import { API_BASE_URL } from "@/config/api"
 import { User, CreateUserPayload, UpdateUserPayload } from "@/types/user"
 
 export async function getUsers(): Promise<User[]> {
-  const res = await fetch(`${API_BASE_URL}/users/`)
+  const res = await fetch(`${API_BASE_URL}/users/`,
+        { cache: "no-store" }
+  )
   if (!res.ok) throw new Error(`Failed to fetch users: ${res.status}`)
   return res.json()
 }

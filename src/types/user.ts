@@ -1,10 +1,14 @@
 export interface User {
-  user_id: number
+  id: number
   name: string
   email: string
+  role: string
+  is_active: boolean
+  created_at : string
+  updated_at : string
 }
 
 
-export type CreateUserPayload = Omit<User, "user_id">
+export type CreateUserPayload = Omit<User, "id">
 
-export type UpdateUserPayload = Partial<Omit<User, "user_id">>
+export type UpdateUserPayload = Partial<Omit<User, "id">>

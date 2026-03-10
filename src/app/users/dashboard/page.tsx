@@ -2,7 +2,29 @@
 
 import { useState } from "react";
 
-const tabs = ["Dashboard", "Appointment", "Room", "Sales"];
+const tabs = ["Dashboard", "Appointment", "Room", "Sales", "Users"];
+
+// Mock user data to simulate fetched users
+const mockUsers = [
+  { id: 1, name: "Ana Reyes", email: "ana.reyes@hotel.com", role: "Admin", is_active: true, created_at: "2024-01-15T08:30:00Z", updated_at: "2024-03-01T10:00:00Z" },
+  { id: 2, name: "Ben Torres", email: "ben.torres@hotel.com", role: "Staff", is_active: true, created_at: "2024-02-10T09:00:00Z", updated_at: "2024-03-05T11:30:00Z" },
+  { id: 3, name: "Carla Lim", email: "carla.lim@hotel.com", role: "Manager", is_active: false, created_at: "2024-01-20T07:45:00Z", updated_at: "2024-02-28T14:00:00Z" },
+  { id: 4, name: "Dan Cruz", email: "dan.cruz@hotel.com", role: "Staff", is_active: true, created_at: "2024-03-01T08:00:00Z", updated_at: "2024-03-10T09:15:00Z" },
+  { id: 5, name: "Eva Mendoza", email: "eva.mendoza@hotel.com", role: "Receptionist", is_active: true, created_at: "2024-02-05T10:30:00Z", updated_at: "2024-03-08T16:45:00Z" },
+];
+
+const formatDate = (dateStr: string) =>
+  new Date(dateStr).toLocaleDateString("en-US", {
+    year: "numeric", month: "short", day: "numeric",
+    hour: "2-digit", minute: "2-digit",
+  });
+
+const roleColors: Record<string, { bg: string; color: string }> = {
+  Admin:       { bg: "#ede9fe", color: "#6d28d9" },
+  Manager:     { bg: "#dbeafe", color: "#1d4ed8" },
+  Staff:       { bg: "#f0fdf4", color: "#15803d" },
+  Receptionist:{ bg: "#fff7ed", color: "#c2410c" },
+};
 
 const tabContent: Record<string, React.ReactNode> = {
   Dashboard: (
@@ -101,6 +123,62 @@ const tabContent: Record<string, React.ReactNode> = {
       </div>
     </div>
   ),
+  Users: (
+    <div style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 16, padding: "28px 24px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
+      {/* Header row */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+        <div style={{ fontWeight: 700, fontSize: 16, color: "#111827" }}>All Users</div>
+        <button style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 16px", background: "#2563eb", color: "#fff", border: "none", borderRadius: 8, fontWeight: 600, fontSize: 13, cursor: "pointer" }}>
+          <span style={{ fontSize: 16, lineHeight: 1 }}>+</span> Create User
+        </button>
+      </div>
+
+      {/* Table */}
+      <div style={{ overflowX: "auto" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+          <thead>
+            <tr style={{ borderBottom: "2px solid #f3f4f6" }}>
+              {["User ID", "Name", "Email", "Password", "Role", "Status", "Created At", "Updated At", "Actions"].map((h) => (
+                <th key={h} style={{ textAlign: "left", padding: "10px 12px", color: "#6b7280", fontWeight: 600, fontSize: 12, textTransform: "uppercase", letterSpacing: 0.5, whiteSpace: "nowrap" }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {mockUsers.map((user, i) => {
+              const roleStyle = roleColors[user.role] ?? { bg: "#f3f4f6", color: "#374151" };
+              return (
+                <tr key={user.id} style={{ borderBottom: i < mockUsers.length - 1 ? "1px solid #f3f4f6" : "none", transition: "background 0.1s" }}
+                  onMouseEnter={e => (e.currentTarget.style.background = "#f9fafb")}
+                  onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+                >
+                  <td style={{ padding: "14px 12px", color: "#9ca3af", fontWeight: 600 }}>#{user.id}</td>
+                  <td style={{ padding: "14px 12px", fontWeight: 700, color: "#111827" }}>{user.name}</td>
+                  <td style={{ padding: "14px 12px", color: "#6b7280" }}>{user.email}</td>
+                  <td style={{ padding: "14px 12px", color: "#9ca3af", letterSpacing: 2 }}>••••••••</td>
+                  <td style={{ padding: "14px 12px" }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 99, background: roleStyle.bg, color: roleStyle.color }}>{user.role}</span>
+                  </td>
+                  <td style={{ padding: "14px 12px" }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 99, background: user.is_active ? "#dcfce7" : "#fee2e2", color: user.is_active ? "#16a34a" : "#dc2626" }}>
+                      {user.is_active ? "Active" : "Inactive"}
+                    </span>
+                  </td>
+                  <td style={{ padding: "14px 12px", color: "#6b7280", whiteSpace: "nowrap" }}>{formatDate(user.created_at)}</td>
+                  <td style={{ padding: "14px 12px", color: "#6b7280", whiteSpace: "nowrap" }}>{formatDate(user.updated_at)}</td>
+                  <td style={{ padding: "14px 12px" }}>
+                    <div style={{ display: "flex", gap: 6 }}>
+                      <button style={{ padding: "5px 12px", borderRadius: 6, border: "1px solid #e5e7eb", background: "#fff", color: "#374151", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Edit</button>
+                      <button style={{ padding: "5px 12px", borderRadius: 6, border: "none", background: "#fee2e2", color: "#dc2626", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Delete</button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  ),
 };
 
 export default function Dashboard() {
@@ -128,6 +206,7 @@ export default function Dashboard() {
               Appointment: "📅",
               Room: "🛏",
               Sales: "📊",
+              Users: "👥",
             };
             const isActive = activeTab === tab;
             return (

@@ -1,29 +1,56 @@
+"use client"
 
-import { getUsers } from "@/services/userService"
+import { useEffect, useState } from "react"
+import { getUsers, deleteUser } from "@/services/userService"
 import { User } from "@/types/user"
-// import CreateUserModal from "@/components/CreateUserModal"
+import CreateUserModal from "@/components/CreateUserModal"
 
-export default async function UsersPage() {
+export default function UsersPage() {
 
-  // Simple utility function
-const formatDate = (dateStr: string) => {
-  return new Date(dateStr).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
+  const [users, setUsers] = useState<User[]>([])
+  const [loading, setLoading] = useState(true)
+  const [editUser, setEditUser] = useState<User | null>(null)  // ← tracks who is being edited
 
-  const users: User[] = await getUsers()
+  const formatDate = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  }
+
+  async function fetchUsers() {
+    const data = await getUsers()
+    setUsers(data)
+    setLoading(false)
+  }
+
+  async function handleDelete(id: number) {
+    await deleteUser(id)
+    fetchUsers()
+  }
+
+  useEffect(() => {
+    fetchUsers()
+  }, [])
+
+  if (loading) return (
+    <div className="flex justify-center p-10">
+      <span className="loading loading-spinner loading-lg"></span>
+    </div>
+  )
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-center text-2xl font-bold mb-4">User List</h1>
       <div className="border border-gray-300 my-2"></div>
 
-      {/* <CreateUserModal /> */}
+      <CreateUserModal
+        onSuccess={fetchUsers}
+        editUser={editUser}        // ← pass selected user
+      />
 
       <table className="table table-zebra w-[90vw] border border-gray-300 my-5">
         <thead>
@@ -33,6 +60,7 @@ const formatDate = (dateStr: string) => {
             <th>Email</th>
             <th>Password</th>
             <th>Role</th>
+            <th>Avatar URL</th>
             <th>IsActive</th>
             <th>create_at</th>
             <th>updated_at</th>
@@ -47,12 +75,25 @@ const formatDate = (dateStr: string) => {
               <td>{user.email}</td>
               <td>*******</td>
               <td>{user.role}</td>
+              <td>*******</td>
               <td>{user.is_active ? 'Active' : 'InActive'}</td>
               <td>{formatDate(user.created_at)}</td>
               <td>{formatDate(user.updated_at)}</td>
               <td>
-                <button className="btn btn-secondary">Edit</button>
-                <button className="btn btn-error ml-2">Delete</button>
+                {/* ← sets editUser then opens modal */}
+                <label
+                  htmlFor="user_modal"
+                  className="btn btn-secondary"
+                  onClick={() => setEditUser(user)}
+                >
+                  Edit
+                </label>
+                <button
+                  className="btn btn-error ml-2"
+                  onClick={() => handleDelete(user.id)}
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}

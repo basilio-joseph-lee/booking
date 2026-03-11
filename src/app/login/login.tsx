@@ -19,7 +19,7 @@ async function Login(){
 
     try{
         await loginAuthentication({email,password})
-        router.push("/users/dashboard")
+        router.push("/admin/dashboard")
     }catch(e){
         setError("Invalid Credentials")
         setLoading(false)
@@ -48,6 +48,7 @@ async function Login(){
                 <input type="text" 
                     placeholder="Username" 
                     className="input input-bordered"
+                    autoFocus
                     value={email}
                     onChange={(e)=> setEmail(e.target.value)}
                 />

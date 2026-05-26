@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ToastProvider } from "@/hooks/useToast";
+import { logout } from "@/services/authServices";
+import { useRouter } from "next/router";
 
 const navItems = [
   { label: "Dashboard",    href: "/admin/dashboard",    icon: "⊞" },
@@ -37,7 +39,11 @@ const navItems = [
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-
+  const router   = useRouter();        
+  function handleLogout() {            
+    logout();
+    router.push("/login");
+  }
   return (
     <ToastProvider>
       <div
@@ -116,6 +122,36 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               );
             })}
           </nav>
+          <div style={{
+            marginTop: "auto",
+            padding: "16px",
+            borderTop: "1px solid #f3f4f6",
+          }}>
+            <button
+              onClick={handleLogout}
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                padding: "11px 16px",
+                borderRadius: 10,
+                border: "none",
+                background: "transparent",
+                color: "#ef4444",
+                fontWeight: 600,
+                fontSize: 14,
+                cursor: "pointer",
+                fontFamily: "inherit",
+                transition: "all 0.15s ease",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "#fff1f2")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+            >
+              <span style={{ fontSize: 16 }}>🚪</span>
+              Sign Out
+            </button>
+          </div>
         </aside>
 
         {/* ── Main content offset by sidebar width ── */}

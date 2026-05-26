@@ -6,7 +6,7 @@ export interface Guest {
   id_type: string
   id_number: string
   created_at: string
-  user_id: number
+  user_id:    number | null; 
 }
 
 export type CreateGuestPayload = Omit<Guest, "guest_id" | "created_at">

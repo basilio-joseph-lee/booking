@@ -12,5 +12,7 @@ export interface Room {
   updated_at: string
 }
 
-export type CreateRoomPayload = Omit<Room, "room_id" | "created_at" | "updated_at">
+export type CreateRoomPayload = Omit<Room, "room_id" | "created_at" | "updated_at" | "status"> & {
+  status?: string;
+}
 export type UpdateRoomPayload = Partial<CreateRoomPayload>

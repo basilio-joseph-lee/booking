@@ -86,7 +86,9 @@ const OCC_STATUSES = ["Occupied", "Vacant", "Pending", "Housekeeping", "Maintena
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 
 function formatDate(d: string) {
-  return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  return new Date(d).toLocaleDateString("en-US", {
+    month: "short", day: "numeric", year: "numeric",
+  });
 }
 
 // ─── STATUS BADGE ────────────────────────────────────────────────────────────
@@ -118,24 +120,17 @@ function SkeletonCard() {
 
 // ─── IMAGE UPLOADER ──────────────────────────────────────────────────────────
 
-function ImageUploader({
-  value,
-  onChange,
-}: {
-  value:    string;
-  onChange: (url: string) => void;
-}) {
-  const [mode, setMode]       = useState<"url" | "upload">("url");
+function ImageUploader({ value, onChange }: { value: string; onChange: (url: string) => void }) {
+  const [mode, setMode]         = useState<"url" | "upload">("url");
   const [imgError, setImgError] = useState(false);
-  const fileRef               = useRef<HTMLInputElement>(null);
+  const fileRef                 = useRef<HTMLInputElement>(null);
 
   function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (ev) => {
-      const result = ev.target?.result as string;
-      onChange(result);
+      onChange(ev.target?.result as string);
       setImgError(false);
     };
     reader.readAsDataURL(file);
@@ -153,9 +148,7 @@ function ImageUploader({
       {/* Toggle */}
       <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
         {(["url", "upload"] as const).map((m) => (
-          <button
-            key={m}
-            onClick={() => setMode(m)}
+          <button key={m} onClick={() => setMode(m)}
             style={{
               padding: "5px 14px", borderRadius: 8, border: "1px solid",
               fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
@@ -179,15 +172,11 @@ function ImageUploader({
         />
       )}
 
-      {/* File upload */}
+      {/* File upload dropzone */}
       {mode === "upload" && (
         <div
           onClick={() => fileRef.current?.click()}
-          style={{
-            border: "2px dashed #e2e8f0", borderRadius: 12, padding: "20px",
-            textAlign: "center", cursor: "pointer", background: "#f8fafc",
-            transition: "border-color 0.15s",
-          }}
+          style={{ border: "2px dashed #e2e8f0", borderRadius: 12, padding: "20px", textAlign: "center", cursor: "pointer", background: "#f8fafc", transition: "border-color 0.15s" }}
           onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#94a3b8")}
           onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#e2e8f0")}
         >
@@ -198,13 +187,12 @@ function ImageUploader({
         </div>
       )}
 
-      {/* Preview — card-shaped frame */}
+      {/* Card preview */}
       {value && !imgError && (
         <div style={{ marginTop: 12 }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 6 }}>
             Preview on Card
           </div>
-          {/* Mimics the card image area */}
           <div style={{ borderRadius: 14, overflow: "hidden", border: "1px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
             <div style={{ height: 140, position: "relative", background: "#f1f5f9" }}>
               <img
@@ -213,10 +201,8 @@ function ImageUploader({
                 onError={() => setImgError(true)}
                 style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
               />
-              {/* Badge overlay preview */}
               <div style={{ position: "absolute", top: 8, right: 8, display: "inline-flex", alignItems: "center", gap: 5, fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 99, background: "#f0fdf4", color: "#15803d" }}>
-                <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#22c55e" }} />
-                Vacant
+                <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#22c55e" }} /> Vacant
               </div>
             </div>
             <div style={{ padding: "12px 14px", background: "#fff" }}>
@@ -272,7 +258,6 @@ function OccupancyCard({ room, onClick }: { room: OccupancyRoom; onClick: () => 
       <div style={{ padding: "14px 16px" }}>
         <div style={{ fontWeight: 800, fontSize: 15, color: "#0f172a" }}>Room {room.room_number}</div>
         <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 2 }}>Floor {room.floor} · {room.type}</div>
-
         <div style={{ marginTop: 10, fontSize: 12, color: s.color, display: "flex", alignItems: "center", gap: 5 }}>
           <span style={{ width: 6, height: 6, borderRadius: "50%", background: s.dot, display: "inline-block", flexShrink: 0 }} />
           {room.room_status === "Occupied"     && `Guest staying · ${room.booking?.nights_remaining}n left`}
@@ -282,7 +267,6 @@ function OccupancyCard({ room, onClick }: { room: OccupancyRoom; onClick: () => 
           {room.room_status === "Maintenance"  && "Under maintenance"}
           {room.room_status === "Checked Out"  && "Checked out today"}
         </div>
-
         <div style={{ marginTop: 8, fontSize: 11, color: "#cbd5e1", fontStyle: "italic" }}>Tap to view details →</div>
       </div>
     </div>
@@ -295,7 +279,8 @@ function ManageCard({ room, onEdit, onDelete }: { room: Room; onEdit: () => void
   const [imgErr, setImgErr] = useState(false);
 
   return (
-    <div style={{ background: "#fff", border: "1px solid #f1f5f9", borderRadius: 16, overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.04)", transition: "all 0.15s" }}
+    <div
+      style={{ background: "#fff", border: "1px solid #f1f5f9", borderRadius: 16, overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.04)", transition: "all 0.15s" }}
       onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 8px 24px rgba(0,0,0,0.08)"; }}
       onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.boxShadow = "0 2px 8px rgba(0,0,0,0.04)"; }}
     >
@@ -309,7 +294,6 @@ function ManageCard({ room, onEdit, onDelete }: { room: Room; onEdit: () => void
           </div>
         )}
       </div>
-
       <div style={{ padding: "14px 16px" }}>
         <div style={{ fontWeight: 800, fontSize: 15, color: "#0f172a" }}>Room {room.room_number}</div>
         <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 2 }}>Floor {room.floor} · {room.type}</div>
@@ -317,15 +301,18 @@ function ManageCard({ room, onEdit, onDelete }: { room: Room; onEdit: () => void
           👥 {room.max_occupancy} pax · ₱{parseFloat(room.price_per_night).toLocaleString()}/night
         </div>
         <div style={{ display: "flex", justifyContent: "flex-end", gap: 6, marginTop: 12 }}>
-          <button onClick={onEdit} title="Edit" style={{ width: 30, height: 30, borderRadius: 8, border: "1px solid #e2e8f0", background: "#f8fafc", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <button onClick={onEdit} title="Edit"
+            style={{ width: 30, height: 30, borderRadius: 8, border: "1px solid #e2e8f0", background: "#f8fafc", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
             </svg>
           </button>
-          <button onClick={(e) => { e.stopPropagation(); onDelete(); }} title="Delete" style={{ width: 30, height: 30, borderRadius: 8, border: "1px solid #fecdd3", background: "#fff1f2", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <button onClick={(e) => { e.stopPropagation(); onDelete(); }} title="Delete"
+            style={{ width: 30, height: 30, borderRadius: 8, border: "1px solid #fecdd3", background: "#fff1f2", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
               <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
             </svg>
           </button>
@@ -343,7 +330,6 @@ function OccupancyModal({ room, onClose, onStatusUpdate }: {
   onStatusUpdate: (roomId: number, newStatus: string) => Promise<void>;
 }) {
   const [updating, setUpdating] = useState(false);
-  const s = STATUS_STYLE[room.room_status] ?? STATUS_STYLE["Vacant"];
 
   async function handleStatusUpdate(newStatus: string) {
     setUpdating(true);
@@ -363,9 +349,7 @@ function OccupancyModal({ room, onClose, onStatusUpdate }: {
           ) : (
             <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 40 }}>🏨</div>
           )}
-          {/* Dark gradient overlay */}
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%)" }} />
-          {/* Room info on image */}
           <div style={{ position: "absolute", bottom: 14, left: 16, right: 16, display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
             <div>
               <div style={{ fontSize: 20, fontWeight: 900, color: "#fff" }}>Room {room.room_number}</div>
@@ -375,10 +359,10 @@ function OccupancyModal({ room, onClose, onStatusUpdate }: {
             </div>
             <StatusBadge status={room.room_status} />
           </div>
-          <button
-            onClick={onClose}
-            style={{ position: "absolute", top: 12, right: 12, background: "rgba(0,0,0,0.4)", border: "none", borderRadius: 8, width: 30, height: 30, cursor: "pointer", fontSize: 14, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}
-          >✕</button>
+          <button onClick={onClose}
+            style={{ position: "absolute", top: 12, right: 12, background: "rgba(0,0,0,0.4)", border: "none", borderRadius: 8, width: 30, height: 30, cursor: "pointer", fontSize: 14, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            ✕
+          </button>
         </div>
 
         {/* Content */}
@@ -390,12 +374,12 @@ function OccupancyModal({ room, onClose, onStatusUpdate }: {
               <div style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 14 }}>Current Guest</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {[
-                  { label: "Guest",           value: room.booking.guest.name,              bold: true },
-                  { label: "Booking #",        value: `#${room.booking.booking_id}`,        bold: true },
-                  { label: "Check-in",         value: formatDate(room.booking.check_in),    bold: false },
-                  { label: "Check-out",        value: formatDate(room.booking.check_out),   bold: false },
-                  { label: "Email",            value: room.booking.guest.email,             bold: false },
-                  { label: "Phone",            value: room.booking.guest.phone,             bold: false },
+                  { label: "Guest",    value: room.booking.guest.name,           bold: true  },
+                  { label: "Booking #", value: `#${room.booking.booking_id}`,    bold: true  },
+                  { label: "Check-in",  value: formatDate(room.booking.check_in), bold: false },
+                  { label: "Check-out", value: formatDate(room.booking.check_out),bold: false },
+                  { label: "Email",     value: room.booking.guest.email,          bold: false },
+                  { label: "Phone",     value: room.booking.guest.phone,          bold: false },
                 ].map(({ label, value, bold }) => (
                   <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <span style={{ fontSize: 13, color: "#94a3b8" }}>{label}</span>
@@ -420,8 +404,8 @@ function OccupancyModal({ room, onClose, onStatusUpdate }: {
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {[
-                  { label: "Guest",             value: room.booking.guest.name,            bold: true },
-                  { label: "Booking #",          value: `#${room.booking.booking_id}`,      bold: true },
+                  { label: "Guest",             value: room.booking.guest.name,            bold: true  },
+                  { label: "Booking #",          value: `#${room.booking.booking_id}`,      bold: true  },
                   { label: "Expected Check-in",  value: formatDate(room.booking.check_in),  bold: false },
                   { label: "Check-out",          value: formatDate(room.booking.check_out), bold: false },
                 ].map(({ label, value, bold }) => (
@@ -482,8 +466,8 @@ function OccupancyModal({ room, onClose, onStatusUpdate }: {
                 <>
                   <div style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 10 }}>Next Booking</div>
                   {[
-                    { label: "Guest",     value: room.next_booking.guest_name, bold: true },
-                    { label: "Check-in",  value: formatDate(room.next_booking.check_in), bold: false },
+                    { label: "Guest",     value: room.next_booking.guest_name, bold: true  },
+                    { label: "Check-in",  value: formatDate(room.next_booking.check_in),  bold: false },
                     { label: "Check-out", value: formatDate(room.next_booking.check_out), bold: false },
                   ].map(({ label, value, bold }) => (
                     <div key={label} style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
@@ -583,13 +567,10 @@ function RoomModal({ mode, initial, onClose, onSubmit, saving }: {
             <label style={labelStyle}>Max Occupancy</label>
             <input style={inputStyle} type="number" min={1} value={form.max_occupancy} onChange={(e) => set("max_occupancy", Number(e.target.value))} />
           </div>
-
-          {/* Image uploader — full width */}
           <div style={{ gridColumn: "1 / -1" }}>
             <label style={labelStyle}>Room Image</label>
             <ImageUploader value={form.image_url ?? ""} onChange={(url) => set("image_url", url)} />
           </div>
-
           <div style={{ gridColumn: "1 / -1" }}>
             <label style={labelStyle}>Description</label>
             <textarea style={{ ...inputStyle, resize: "vertical", minHeight: 72 }} value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="Room description..." />
@@ -727,36 +708,31 @@ export default function RoomPage() {
     finally { setDeleting(false); }
   }
 
-  const filteredOccupancy = occupancyRooms.filter((r) => filterOccStatus === "All" || r.room_status === filterOccStatus);
-  const filteredManage    = rooms.filter((r) => {
+  const filteredOccupancy = occupancyRooms.filter((r) =>
+    filterOccStatus === "All" || r.room_status === filterOccStatus
+  );
+
+  const filteredManage = rooms.filter((r) => {
     const matchSearch = r.room_number.toLowerCase().includes(search.toLowerCase()) || r.type.toLowerCase().includes(search.toLowerCase());
     return matchSearch && (filterType === "All" || r.type === filterType);
   });
 
-  // ── Summary tiles config ──
-  const summaryTiles = summary ? [
-    [
-      { label: "Total Rooms",   value: summary.total_rooms,        color: "#0f172a", bg: "#f1f5f9", border: "#e2e8f0" },
-      { label: "Occupied",      value: summary.occupied,           color: "#1d4ed8", bg: "#eff6ff", border: "#bfdbfe" },
-      { label: "Vacant",        value: summary.vacant,             color: "#15803d", bg: "#f0fdf4", border: "#bbf7d0" },
-      { label: "Pending",       value: summary.pending,            color: "#a16207", bg: "#fefce8", border: "#fde047" },
-      { label: "Housekeeping",  value: summary.housekeeping,       color: "#7e22ce", bg: "#fdf4ff", border: "#e9d5ff" },
-    ],
-    [
-      { label: "Maintenance",   value: summary.maintenance,        color: "#be123c", bg: "#fff1f2", border: "#fecdd3" },
-      { label: "Checked Out",   value: summary.checked_out,        color: "#475569", bg: "#f1f5f9", border: "#e2e8f0" },
-      { label: "Checking In",   value: summary.checking_in_today,  color: "#0369a1", bg: "#f0f9ff", border: "#bae6fd" },
-      { label: "Checking Out",  value: summary.checking_out_today, color: "#c2410c", bg: "#fff7ed", border: "#fed7aa" },
-    ],
+  // ── Summary — single row, 5 tiles ──
+  const summaryRow = summary ? [
+    { label: "Total Rooms",  value: summary.total_rooms,  color: "#0f172a", bg: "#f1f5f9", border: "#e2e8f0" },
+    { label: "Occupied",     value: summary.occupied,     color: "#1d4ed8", bg: "#eff6ff", border: "#bfdbfe" },
+    { label: "Vacant",       value: summary.vacant,       color: "#15803d", bg: "#f0fdf4", border: "#bbf7d0" },
+    { label: "Pending",      value: summary.pending,      color: "#a16207", bg: "#fefce8", border: "#fde047" },
+    { label: "Housekeeping", value: summary.housekeeping, color: "#7e22ce", bg: "#fdf4ff", border: "#e9d5ff" },
   ] : [];
 
   return (
     <>
       <style>{`@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }`}</style>
 
-      {selectedRoom && <OccupancyModal room={selectedRoom} onClose={() => setSelectedRoom(null)} onStatusUpdate={handleStatusUpdate} />}
-      {showCreate   && <RoomModal mode="create" initial={DEFAULT_FORM} onClose={() => setShowCreate(false)} onSubmit={handleCreate} saving={saving} />}
-      {editTarget   && (
+      {selectedRoom  && <OccupancyModal room={selectedRoom} onClose={() => setSelectedRoom(null)} onStatusUpdate={handleStatusUpdate} />}
+      {showCreate    && <RoomModal mode="create" initial={DEFAULT_FORM} onClose={() => setShowCreate(false)} onSubmit={handleCreate} saving={saving} />}
+      {editTarget    && (
         <RoomModal
           mode="edit"
           initial={{ room_number: editTarget.room_number, floor: editTarget.floor, type: editTarget.type, price_per_night: editTarget.price_per_night, max_occupancy: editTarget.max_occupancy, image_url: editTarget.image_url ?? "", description: editTarget.description }}
@@ -765,7 +741,7 @@ export default function RoomPage() {
           saving={saving}
         />
       )}
-      {deleteTarget && <DeleteConfirm room={deleteTarget} onClose={() => setDeleteTarget(null)} onConfirm={handleDelete} deleting={deleting} />}
+      {deleteTarget  && <DeleteConfirm room={deleteTarget} onClose={() => setDeleteTarget(null)} onConfirm={handleDelete} deleting={deleting} />}
 
       <div style={{ padding: "36px 40px", fontFamily: "'DM Sans', sans-serif", minHeight: "100vh", background: "#f8fafc" }}>
 
@@ -783,26 +759,20 @@ export default function RoomPage() {
             </p>
           </div>
           {activeTab === "manage" && (
-            <button
-              onClick={() => setShowCreate(true)}
-              style={{ display: "flex", alignItems: "center", gap: 8, padding: "11px 22px", borderRadius: 12, border: "none", background: "#0f172a", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 4px 16px rgba(15,23,42,0.25)" }}
-            >
+            <button onClick={() => setShowCreate(true)}
+              style={{ display: "flex", alignItems: "center", gap: 8, padding: "11px 22px", borderRadius: 12, border: "none", background: "#0f172a", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 4px 16px rgba(15,23,42,0.25)" }}>
               <span style={{ fontSize: 18, lineHeight: 1 }}>+</span> Add Room
             </button>
           )}
         </div>
 
-        {/* ── Summary — 2 rows ── */}
+        {/* ── Summary strip — single row ── */}
         {activeTab === "occupancy" && summary && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28 }}>
-            {summaryTiles.map((row, ri) => (
-              <div key={ri} style={{ display: "flex", gap: 10 }}>
-                {row.map(({ label, value, color, bg, border }) => (
-                  <div key={label} style={{ flex: 1, background: bg, border: `1px solid ${border}`, borderRadius: 14, padding: "14px 18px", display: "flex", alignItems: "center", gap: 14 }}>
-                    <div style={{ fontSize: 28, fontWeight: 900, color, lineHeight: 1 }}>{value}</div>
-                    <div style={{ fontSize: 11, fontWeight: 700, color, opacity: 0.75, textTransform: "uppercase", letterSpacing: "0.06em", lineHeight: 1.4 }}>{label}</div>
-                  </div>
-                ))}
+          <div style={{ display: "flex", gap: 10, marginBottom: 28 }}>
+            {summaryRow.map(({ label, value, color, bg, border }) => (
+              <div key={label} style={{ flex: 1, background: bg, border: `1px solid ${border}`, borderRadius: 14, padding: "14px 18px", display: "flex", alignItems: "center", gap: 14 }}>
+                <div style={{ fontSize: 28, fontWeight: 900, color, lineHeight: 1 }}>{value}</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color, opacity: 0.75, textTransform: "uppercase", letterSpacing: "0.06em", lineHeight: 1.4 }}>{label}</div>
               </div>
             ))}
           </div>
@@ -816,8 +786,7 @@ export default function RoomPage() {
                 background: activeTab === tab ? "#fff" : "transparent",
                 color:      activeTab === tab ? "#0f172a" : "#94a3b8",
                 boxShadow:  activeTab === tab ? "0 1px 4px rgba(0,0,0,0.08)" : "none",
-              }}
-            >
+              }}>
               {tab === "occupancy" ? "🏨 Occupancy" : "⚙️ Manage Rooms"}
             </button>
           ))}
@@ -834,11 +803,15 @@ export default function RoomPage() {
               </select>
               <button onClick={loadOccupancy} style={{ padding: "9px 14px", borderRadius: 10, border: "1px solid #e2e8f0", background: "#fff", fontSize: 14, cursor: "pointer" }}>🔄</button>
             </div>
-            {occupancyError && <div style={{ background: "#fff1f2", color: "#be123c", borderRadius: 10, padding: "12px 16px", marginBottom: 20, fontSize: 13 }}>{occupancyError}</div>}
+            {occupancyError && (
+              <div style={{ background: "#fff1f2", color: "#be123c", borderRadius: 10, padding: "12px 16px", marginBottom: 20, fontSize: 13 }}>{occupancyError}</div>
+            )}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
               {occupancyLoading
                 ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)
-                : filteredOccupancy.map((room) => <OccupancyCard key={room.room_id} room={room} onClick={() => setSelectedRoom(room)} />)
+                : filteredOccupancy.map((room) => (
+                    <OccupancyCard key={room.room_id} room={room} onClick={() => setSelectedRoom(room)} />
+                  ))
               }
             </div>
             {!occupancyLoading && filteredOccupancy.length === 0 && (
@@ -860,11 +833,15 @@ export default function RoomPage() {
               </select>
               <button onClick={loadRooms} style={{ padding: "9px 14px", borderRadius: 10, border: "1px solid #e2e8f0", background: "#fff", fontSize: 14, cursor: "pointer" }}>🔄</button>
             </div>
-            {manageError && <div style={{ background: "#fff1f2", color: "#be123c", borderRadius: 10, padding: "12px 16px", marginBottom: 20, fontSize: 13 }}>{manageError}</div>}
+            {manageError && (
+              <div style={{ background: "#fff1f2", color: "#be123c", borderRadius: 10, padding: "12px 16px", marginBottom: 20, fontSize: 13 }}>{manageError}</div>
+            )}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
               {manageLoading
                 ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)
-                : filteredManage.map((room) => <ManageCard key={room.room_id} room={room} onEdit={() => setEditTarget(room)} onDelete={() => setDeleteTarget(room)} />)
+                : filteredManage.map((room) => (
+                    <ManageCard key={room.room_id} room={room} onEdit={() => setEditTarget(room)} onDelete={() => setDeleteTarget(room)} />
+                  ))
               }
             </div>
             {!manageLoading && filteredManage.length === 0 && (

@@ -34,7 +34,7 @@ const toast = useToast()
         email: editUser.email,
         password: "",           // never pre-fill password
         role: editUser.role,
-        avatar_url: editUser.avatar_url,
+        avatar_url: editUser.avatar_url ?? "",
         is_active: editUser.is_active,
       })
     } else {
